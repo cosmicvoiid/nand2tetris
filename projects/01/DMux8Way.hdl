@@ -1,0 +1,27 @@
+// This file is part of www.nand2tetris.org
+// and the book "The Elements of Computing Systems"
+// by Nisan and Schocken, MIT Press.
+// File name: projects/01/DMux8Way.hdl
+/**
+ * 8-way demultiplexor:
+ * [a, b, c, d, e, f, g, h] = [in, 0, 0, 0, 0, 0, 0, 0] if sel == 000
+ *                            [0, in, 0, 0, 0, 0, 0, 0] if sel == 001
+ *                            ...
+ *                            [0, 0, 0, 0, 0, 0, 0, in] if sel == 111
+ */
+CHIP DMux8Way {
+    IN in, sel[3];
+    OUT a, b, c, d, e, f, g, h;
+
+    PARTS:
+    DMux4Way(in=in, sel=sel[0..1], a=aOut, b=bOut, c=cOut, d=dOut);
+    DMux4Way(in=in, sel=sel[0..1], a=eOut, b=fOut, c=gOut, d=hOut);
+    Mux(a=aOut, b=eOut, sel=sel[2], out=muxOut1);
+    Mux(a=bOut, b=fOut, sel=sel[2], out=muxOut2);
+    Mux(a=cOut, b=gOut, sel=sel[2], out=muxOut3);
+    Mux(a=dOut, b=hOut, sel=sel[2], out=muxOut4);
+    DMux(in=muxOut1, sel=sel[2], a=a, b=e);
+    DMux(in=muxOut2, sel=sel[2], a=b, b=f);
+    DMux(in=muxOut3, sel=sel[2], a=c, b=g);
+    DMux(in=muxOut4, sel=sel[2], a=d, b=h);
+}
