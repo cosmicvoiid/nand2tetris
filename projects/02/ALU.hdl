@@ -41,5 +41,34 @@ CHIP ALU {
         ng;      // if (out < 0)  equals 1, else 0
 
     PARTS:
-    //// Replace this comment with your code.
+    Not16(in=x, out=notx);
+    And16(a=x, b=notx, out=zerox);
+    Mux16(a=x, b=zerox, sel=zx, out=muxout1);
+
+    Not16(in=muxout1, out=neqzeromuxout1);
+    Mux16(a=muxout1, b=neqzeromuxout1, sel=nx, out=muxout2);
+
+    Not16(in=y, out=noty);
+    And16(a=y, b=noty, out=zeroy);
+    Mux16(a=y, b=zeroy, sel=zy, out=muxout3);
+
+    Not16(in=muxout3, out=neqzeromuxout2);
+    Mux16(a=muxout3, b=neqzeromuxout2, sel=ny, out=muxout4);
+
+    Add16(a=muxout2, b=muxout4, out=add1);
+    And16(a=muxout2, b=muxout4, out=and1);
+    Mux16(a=and1, b=add1, sel=f, out=muxout5);
+
+    Not16(in=muxout5, out=notmuxout5); 
+    Mux16(a=muxout5, b=notmuxout5, sel=no, out=muxfinalout);
+    Mux16(a=muxout5, b=notmuxout5, sel=no, out[15]=muxfinalbitout);
+
+    Or16(a=muxfinalout, b=false, out=out);
+
+    Add16(a=muxfinalout, b=true, out[15]=zrout);
+    Mux(a=false, b=true, sel=zrout, out=zrmuxout);
+    Not(in=muxfinalbitout, out=muxoutfinalbitcheck);
+    And(a=zrmuxout, b=muxoutfinalbitcheck, out=zr);
+
+    Mux(a=false, b=true, sel=muxfinalbitout, out=ng);
 }
